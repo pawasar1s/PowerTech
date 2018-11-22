@@ -20,7 +20,7 @@ OID_sum_PcHH = cell2mat(OID_sum_PcHH);
 OID_sum_I2R = cell2mat(OID_sum_I2R);
 VAR_sum_PcHH = cell2mat(VAR_sum_PcHH);
 VAR_sum_I2R = cell2mat(VAR_sum_I2R);
-%%
+%
 temp_OIDhh = reshape(OID_relocation_Pc.store_Gug_PcHH, [], 1);
 temp_VARhh = reshape(VAR_relocation_Pc.store_VAR_PcHH, [], 1);
 OID_HHbox = cell2mat(temp_OIDhh); 

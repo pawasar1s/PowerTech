@@ -1,7 +1,7 @@
 clear; clc; close all; 
 addpath(genpath('matpower7.0b1')); addpath(genpath('cvx')); addpath(genpath('SC_Cases')); 
 addpath(genpath('IEEECases')); addpath(genpath('readMatPower')); addpath(genpath('Results')); 
-addpath(genpath('C:\Users\plus0002\OneDrive\PhD\DTUproject\cvx\functions\vec_'))  
+addpath(genpath('C:\Users\plus0002\OneDrive\PhD\PowerTech2018\cvx\functions\vec_'))  
 rmpath('cvx/lib/narginchk_') % remove this function to avoid a potential name conflict 
 %checkcode Guggilam -cyc %% -> Applies McCabe Complexity (should keep below 10)  
 
@@ -10,11 +10,11 @@ multiPer = 1; % 1: multiperiod model, 0: discretised model
 per = 26; % for discretised model, which period to test? 26: 1pm (30min intervals) 
 OID_model = 2; % 1: run Guggilam OID model, 2: run Volt/Var droop control model  
 plotting = 0; % 1: YES, 0: NO 
-saveRes = 2; % 0: don't save 1: save for single location, 2: save losses for random locations
+saveRes = 0; % 0: don't save 1: save for single location, 2: save losses for random locations
 %solarCap = [1 2 2.5]; % solar PV capacity multiplier
 %solarCap = 2; i = 1; % solar PV capacity multiplier 
 solarCap = 0:0.3:4;% i = 21;
-nRandLoc = 12; % No of scnearios with rand location 
+nRandLoc = 1; % No of scnearios with rand location 
 nRandCap = length(solarCap); % No of penetration scnearios 
 % Defines the number of periods and allocates memory
 if multiPer == 1
