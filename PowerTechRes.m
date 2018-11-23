@@ -47,33 +47,52 @@ VAR_sum_Qc = VAR_PQ_1pm.store_VAR_Qc;
 %
 OID_Qplot = OID_sum_Sreal' - OID_sum_Pinj';
 VAR_Qplot = VAR_sum_Sreal' - VAR_sum_Pinj';
-%
+nScen = length(OID_I2R_1pm.store_Gug_I2R);
 %% FIGURE 1: Voltage Profile (OID vs Volt/VAR)
 nBuses = 19;
 % voltage profile over feeder
 figure(102)
-plot(1:nBuses, OID_I2R_1pm.store_Gug_V{10},'k')
+plot(1:nBuses, OID_I2R_1pm.store_Gug_V{ceil(1/3*nScen)},'k')
 hold on
-plot(1:nBuses, OID_I2R_1pm.store_Gug_V{20},'b')
-plot(1:nBuses, OID_I2R_1pm.store_Gug_V{30},'r')
-plot(1:nBuses, VAR_I2R_1pm.store_VAR_V{10},'k--')
-plot(1:nBuses, VAR_I2R_1pm.store_VAR_V{20},'b--')
-plot(1:nBuses, VAR_I2R_1pm.store_VAR_V{30},'r--')
+plot(1:nBuses, OID_I2R_1pm.store_Gug_V{ceil(2/3*nScen)},'b')
+plot(1:nBuses, OID_I2R_1pm.store_Gug_V{nScen},'r')
+plot(1:nBuses, VAR_I2R_1pm.store_VAR_V{ceil(1/3*nScen)},'k--')
+plot(1:nBuses, VAR_I2R_1pm.store_VAR_V{ceil(2/3*nScen)},'b--')
+plot(1:nBuses, VAR_I2R_1pm.store_VAR_V{nScen},'r--')
 ylabel('Voltage Magnitude [p.u.]'); xlabel('Bus')
 legend({'low pen','med pen','high pen'},'Location','Southeast')
 title('Voltage profile')
 xlim([1 20])
 set(gcf,'color','w'); grid on
-% FIGURE 2: Pole-to-pole Line Losses
+%% FIGURE 2: Pole-to-pole Line Losses
+% figure(107)
+% cov1 = bar([OID_I2R_1pm.store_Gug_I2R{ceil(1/3*nScen)}(:,[1 4 7 10 13 16])', VAR_I2R_1pm.store_VAR_I2R{ceil(1/3*nScen)}(:,[1 4 7 10 13 16])',...
+%     OID_I2R_1pm.store_Gug_I2R{ceil(2/3*nScen)}(:,[1 4 7 10 13 16])', VAR_I2R_1pm.store_VAR_I2R{ceil(2/3*nScen)}(:,[1 4 7 10 13 16])',...
+%     OID_I2R_1pm.store_Gug_I2R{nScen}(:,[1 4 7 10 13 16])', VAR_I2R_1pm.store_VAR_I2R{nScen}(:,[1 4 7 10 13 16])']);hold on % 312.5 is Ibase
+% cov1(1).FaceColor = 'b'; cov1(3).FaceColor = 'b'; cov1(5).FaceColor = 'b';
+% cov1(2).FaceColor = 'r'; cov1(4).FaceColor = 'r'; cov1(6).FaceColor = 'r';
+% ylabel('Active power [p.u.]'); xlabel('Pole-to-pole lines')
+% legend({'OID 1pm 100%','Volt/VAR 1pm 100%', 'OID 1pm 200%','Volt/VAR 1pm 200%', 'OID 1pm 300%','Volt/VAR 1pm 300%',},'Location','Northeast')
+% title('Pole-to-Pole Line Losses'); set(gcf,'color','w'); grid on
+%% FIGURE 2: Line Losses
 figure(107)
-cov1 = bar([OID_I2R_1pm.store_Gug_I2R{10}(:,[1 4 7 10 13 16])', VAR_I2R_1pm.store_VAR_I2R{10}(:,[1 4 7 10 13 16])',...
-    OID_I2R_1pm.store_Gug_I2R{20}(:,[1 4 7 10 13 16])', VAR_I2R_1pm.store_VAR_I2R{20}(:,[1 4 7 10 13 16])',...
-    OID_I2R_1pm.store_Gug_I2R{30}(:,[1 4 7 10 13 16])', VAR_I2R_1pm.store_VAR_I2R{30}(:,[1 4 7 10 13 16])']);hold on % 312.5 is Ibase
-cov1(1).FaceColor = 'b'; cov1(3).FaceColor = 'b'; cov1(5).FaceColor = 'b';
-cov1(2).FaceColor = 'r'; cov1(4).FaceColor = 'r'; cov1(6).FaceColor = 'r';
+colorstring = 'cgbrk';
+indx =[ 1 ceil(1/4*nScen) ceil(2/4*nScen) ceil(3/4*nScen) nScen];
+for i = 1 : length(indx)
+fig107 = plot(1:6, OID_I2R_1pm.store_Gug_I2R{indx(i)}(:,[1 4 7 10 13 16]),'--*','Color', colorstring(i));
+fig108 = plot(1:6, VAR_I2R_1pm.store_VAR_I2R{indx(i)}(:,[1 4 7 10 13 16]),'-*','Color', colorstring(i));
+hold on 
+end
+%set(fig107, {'color'}, {'b'; 'r'; 'k';'y';'c'}); set(fig108, {'color'}, {'b'; 'r'; 'k'; 'y';'c'});
 ylabel('Active power [p.u.]'); xlabel('Pole-to-pole lines')
-legend({'OID 1pm 100%','Volt/VAR 1pm 100%', 'OID 1pm 200%','Volt/VAR 1pm 200%', 'OID 1pm 300%','Volt/VAR 1pm 300%',},'Location','Northeast')
+legend({'0% OID & Volt/VAr', '90% OID','90% Volt/VAr','180% OID','180% Volt/VAr'...
+    '270% OID','270% Volt/VAr', '360% OID','360% Volt/VAr'},'Location','Northeast')
 title('Pole-to-Pole Line Losses'); set(gcf,'color','w'); grid on
+%%
+figure(121)
+plot(1:nScen, OID_PQ_1pm.store_Gug_Pg(:,:))
+hold on 
+plot(1:nScen, OID_PQ_1pm.store_Gug_Pc(:,:))
 %% FIGURE 3: Total Curtailment against penetration OID vs Volt/VAR
 figure(108)
 cov1 = bar([OID_PQ_1pm.store_Gug_Pc', VAR_PQ_1pm.store_VAR_Pc']);
@@ -87,12 +106,12 @@ figure(2);
 %plot([OID_penet_1pm.Var1],OID_penet_1pm.Var3)
 %inputs = [min(OID_sum_Preal', OID_sum_Pinj'), OID_Qplot, abs(OID_sum_Pc)'];
 %inputs = [min(OID_sum_Preal', OID_sum_Pinj'), abs(OID_Qplot), abs(OID_sum_Pc)'];
-inputs = [ OID_sum_Pinj', abs(OID_Qplot),...
+inputs = [ min(OID_sum_Preal', OID_sum_Pinj'), abs(OID_Qplot),...
     (OID_sum_Sreal' - min(OID_sum_Preal', OID_sum_Pinj') - abs(OID_Qplot)),...
     abs(OID_sum_Pc)'];%, OID_sum_Scap - ((OID_sum_Sreal' - min(OID_sum_Preal', OID_sum_Pinj') - abs(OID_Qplot)) - abs(OID_sum_Pc)')]; % with oversized inverter
 %xval = OID_penet_1pm.Var1';
-xval = 1:41;
-handle1 = area(xval, inputs);
+xval = 1:nScen; 
+handle1 = area(xval, inputs); 
 set(handle1,'EdgeColor','none')
 handle1(1).FaceColor = [0.9 0.9 0.6]; 
 %handle1(2).FaceColor = [0.2 0.5 0.4];
@@ -113,11 +132,11 @@ title('PV hosting capacity chart with OID'); grid on; set(gcf,'color','w');
 %% Figure 5: Volt/VAR results over penetration 
 figure(3);
 %plot([OID_penet_1pm.Var1],OID_penet_1pm.Var3)
-inputs = [min(VAR_sum_Preal', VAR_sum_Pinj'), VAR_Qplot,...
+inputs = [min(VAR_sum_Preal', VAR_sum_Pinj'), abs(VAR_Qplot),...
     (VAR_sum_Sreal' - min(VAR_sum_Preal', VAR_sum_Pinj') - abs(VAR_Qplot)),...
     abs(VAR_sum_Pc)'];
-%xval = VAR_penet_1pm.store_VAR_Penet';
-xval = 1:41;
+%xval = VAR_penet_1pm.store_VAR_Penet'; 
+xval = 1:nScen;
 handl2 = area(xval, inputs);
 set(handl2,'EdgeColor','none')
 handl2(1).FaceColor = [0.9 0.9 0.6]; %cover1(1).EdgeColor = 'none';

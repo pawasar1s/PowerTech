@@ -84,11 +84,11 @@ elseif multiPer == 1
     Gug_Vdrop = complex(zeros(T-T0+1,size(mpc.bus,1)-1)); % voltage drop
     Gug_QcInd = zeros(T-T0+1,size(mpc.bus,1)-1); % PV reactive power 
     Gug_PcHH = zeros(T-T0+1,size(mpc.bus,1)-1); % PV curtailment
-    Gug_QminInd = zeros(T-T0+1,size(mpc.bus,1)-1); % maximum PV reactive power (due to PF)
+    Gug_QminHH = zeros(T-T0+1,size(mpc.bus,1)-1); % maximum PV reactive power (due to PF)
     Gug_Preal = zeros(T-T0+1,size(mpc.bus,1)-1); % PV output injected in the grid
     Gug_Sreal = complex(zeros(T-T0+1,size(mpc.bus,1)-1)); % PV output injected in the grid
     Gug_Pinj = zeros(T-T0+1,size(mpc.bus,1)-1); % FOR GRAPHS: real inverter capacity considering Pc 
-    Gug_check_Sinj = complex(zeros(T-T0+1,size(mpc.bus,1)-1)); % FOR GRAPHS: real inverter capacity considering Pc 
+    Gug_check_Sreal = complex(zeros(T-T0+1,size(mpc.bus,1)-1)); % FOR GRAPHS: real inverter capacity considering Pc 
     Gug_max_Pcap = zeros(T-T0+1,size(mpc.bus,1)-1); 
     Gug_max_Scap = complex(zeros(T-T0+1,size(mpc.bus,1)-1)); % FOR GRAPHS: inverter capacity based on Pav    
     Gug_check_PF = zeros(T-T0+1,size(mpc.bus,1)-1); % FOR GRAPHS: PF
@@ -99,9 +99,9 @@ elseif multiPer == 1
         if nPV ~= 0
             Pcap(idxPV-1) = mpc.gen(2:end,9)*solar(t)/baseMVA; % Pmax
             Scap(idxPV-1) = mpc.gen(2:end,9)*inverterSize*solar(t)/baseMVA; % Smax 
-            Qmin = -tan(acos(PF))*(Pcap) + 1/11*Scap;% + overSize2;
+            Qmin = -tan(acos(PF))*(Pcap);% + 1/11*Scap;% + overSize2;
         end
-        Gug_QminInd(t-T0+1,:) = Qmin; % minus to show maax absorbtion level
+        Gug_QminHH(t-T0+1,:) = Qmin; % minus to show maax absorbtion level
         Gug_max_Scap(t-T0+1,:) = Scap; % FOR GRAPHS: inverter capacity based on Pav    
         Gug_max_Pcap(t-T0+1,:) = Pcap; 
         % slope with deadband
@@ -163,7 +163,7 @@ elseif multiPer == 1
         % validate results
         %Gug_Pinj(t-T0+1,:) = Scap - (Scap - sqrt((Scap-Pcurt ).^2 - (Qc).^2));%sqrt(Qc.^2+(Pav-Pc).^2); % FOR GRAPHS: real inverter capacity considering Pc
         %Gug_check_Sinj(t-T0+1,:) = sqrt(Qc.^2+(Pcap-Pcurt).^2); % FOR GRAPHS: real inverter capacity considering Pc
-        Gug_check_Sinj(t-T0+1,:) = sqrt(Qc.^2+(Pcap).^2);
+        Gug_check_Sreal(t-T0+1,:) = sqrt(Qc.^2+(Pinj).^2);
         %Gug_check_PF(t-T0+1,:) = (Pcap-Pcurt)./sqrt((Pcap-Pcurt).^2+Qc.^2); % FOR GRAPHS: PF
         Gug_check_PF(t-T0+1,:) = cos(atan(abs(Qc)./(Pcap-Pcurt)));
         %Gug_check_PF(Gug_check_PF<=0.75) = 1; % FOR GRAPHS: PF
@@ -171,34 +171,33 @@ elseif multiPer == 1
     toc;
     %% Graphs
     if plotting == 1
-        %close all;
+        close all;
+        if T == 48
         select_house = 18;
         select_30minper = [18 21 24];
         % inverter available power vs injected power
         figure(200);
-        plot(1:nB, (Gug_Preal([26 30 34],:)),'s'); hold on;
-        Pcap(idxPV-1) = mpc.gen(2:end,9)*solar(26)/baseMVA;
-        plot(1:nB, Pcap, 'bx')
-        Pcap(idxPV-1) = mpc.gen(2:end,9)*solar(30)/baseMVA;
-        plot(1:nB, Pcap, 'rx')
-        Pcap(idxPV-1) = mpc.gen(2:end,9)*solar(34)/baseMVA;
-        plot(1:nB, Pcap, 'kx')
+        p1 = plot(1:nB, min(Gug_Preal([26 30 34],:), Gug_Pinj([26 30 34],:)), 'x'); hold on;
+        p2 = plot(1:nB, (Gug_max_Pcap([26 30 34],:)),'s');
+        set(p1, {'color'}, {'b'; 'r'; 'k'}); set(p2, {'color'}, {'b'; 'r'; 'k'});
         xlim([0 nB+1])
         ylabel('Injected PV output [kW]'); xlabel('Bus')
         title('Inverter injected power')
         legend({'Pinj 1pm','Pinj 3pm','Pinj 5pm','Pav 1pm','Pav 3pm','Pav 5pm'},'Location','Southwest')
         grid on
         set(gcf,'color','w'); grid on
-        % Inverter reactive power
+        %% Inverter reactive power
         figure(201)
-        plot(Gug_QminInd(:,select_house),'b*');hold on; plot(Gug_QcInd(:,select_house),'b-')
-        plot(Gug_QminInd(:,select_house-6),'r*');hold on; plot(Gug_QcInd(:,select_house-6),'r--')
+        plot(Gug_QminHH(:,select_house),'b*');hold on; plot(Gug_QcInd(:,select_house),'b-')
+        plot(Gug_QminHH(:,select_house-2),'r*');hold on; plot(Gug_QcInd(:,select_house-2),'r--')
+        plot(Gug_QminHH(:,select_house-3),'k*');hold on; plot(Gug_QcInd(:,select_house-3),'k--')
+        plot(Gug_QminHH(:,select_house-5),'g*');hold on; plot(Gug_QcInd(:,select_house-5),'g--')
         ylabel('Reactive Power Q_{c} [kVAR]'); xlabel('Time')
         ylim([-0.2 0.05])
         legend({'HH18 Qc max','HH18 Qc actual', 'HH12 Qc max','HH12 Qc actual'},'Location','Southwest')
         title('Inverter reactive Power')
         set(gcf,'color','w'); grid on
-        % voltage profile over feeder
+        %% voltage profile over feeder
         figure(202)
         plot(1:nBuses, Gug_V([26 30 34],:))%;hold on; plot(Gug_QcInd(26,:),'o')
         ylabel('Voltage Magnitude [p.u.]'); xlabel('Bus')
@@ -207,42 +206,41 @@ elseif multiPer == 1
         title('Voltage profile')
         set(gcf,'color','w'); grid on
         % Inverter apparent power
-        figure(103)
-        plot(Gug_max_Scap(:,select_house),'-');hold on; plot(Gug_check_Sinj(:,select_house),'*')
+        figure(203)
+        plot(Gug_max_Scap(:,select_house),'-');hold on; plot(Gug_check_Sreal(:,select_house),'*')
         ylabel('Apparent power S_{inj} [kVA]'); xlabel('Bus')
         legend({'S = P_{av}*1.1', 'S = sqrt((P_{av}-P_c)^2 + Q_c^2)'},'Location','Northwest')
         title('Inverter apparent power')
         set(gcf,'color','w'); grid on
-        % HOusehold power curtailment
-        figure(2040)
-        plot(Gug_PcHH(:,12:18))%;hold on; plot(Gug_QcInd(26,:),'o')
-        ylabel('Active Power P_{c} [kW]'); xlabel('Time')
-        legend({'HH12','HH13', 'HH14', 'HH15', 'HH16', 'HH17', 'HH18'})
-        title('Inverter power curtailment')
-        %ylim([0 0.3])
-        set(gcf,'color','w'); grid on
         % Inverter power curtailment
         figure(204)
-        plot(T0:T, Gug_PcTot)%;hold on; plot(Gug_QcInd(26,:),'o')
+        plot(T0:T, Gug_PcTot)
         ylabel('Active Power P_{c} [kW]'); xlabel('Time')
         legend({'Pc'})
         title('Inverter power curtailment')
+        % HOusehold power curtailment
+        figure(2040)
+        plot(Gug_PcHH(:,[12:13 15:16 18]))
+        ylabel('Active Power P_{c} [kW]'); xlabel('Time')
+        legend({'HH12','HH13', 'HH14', 'HH15', 'HH16', 'HH17', 'HH18'})
+        title('Inverter power curtailment')
+        set(gcf,'color','w'); grid on
         %ylim([0 max(Gug_PcTot])
         set(gcf,'color','w'); grid on
         %% Inverter power curtailment
-        figure(2041)
-        plot(T0:T, Gug_Pc(:,[13 15:16 18])./Gug_Pinj(:,[13 15:16 18]))
-        ylabel('Active Power P_{c} [kW]'); xlabel('Time')
-        legend({'HH14','HH16','HH17','HH19'})
-        title('Inverter power curtailment')
-        %ylim([0 max(Gug_PcTot])
-        set(gcf,'color','w'); grid on        
+%         figure(2041)
+%         plot(T0:T, Gug_PcHH(:,[13 15:16 18])./Gug_Pinj(:,[13 15:16 18]))
+%         ylabel('Active Power P_{c} [kW]'); xlabel('Time')
+%         legend({'HH14','HH16','HH17','HH19'})
+%         title('Inverter power curtailment')
+%         %ylim([0 max(Gug_PcTot])
+%         set(gcf,'color','w'); grid on        
         %% Inverter Volt/Var ratio
         figure(205)
         plot(Gug_V(select_30minper,select_house), Gug_QcInd(select_30minper,select_house), 'r*')%;hold on; plot(Gug_QcInd(26,:),'o')
         xlim([0.95 1.05])
         hold on
-        plot([Vmin(2) Vmax(2)], [-Gug_QminInd(select_30minper,select_house) Gug_QminInd(select_30minper,select_house)])
+        plot([Vmin(2) Vmax(2)], [-Gug_QminHH(select_30minper,select_house) Gug_QminHH(select_30minper,select_house)])
         xlim([Vmin(2) Vmax(2)])
         ylim([-0.3 0.01])
         ylabel('Reactive Power Q_{c} [kW]'); xlabel('Voltage [p.u.]')
@@ -251,9 +249,9 @@ elseif multiPer == 1
         set(gcf,'color','w'); grid on
         % PF
         figure(206)
-        plot(Gug_check_PF(:,select_house), '-')
+        plot(Gug_check_PF(:,[12:13 15:16 18]), '-')
         ylabel('Power Factor'); xlabel('Time')
-        legend({'PF'},'Location','Southwest')
+        legend({'HH12','HH13', 'HH15', 'HH16', 'HH18'},'Location','Southwest')
         title('Inverter power factor')
         ylim([0.5 1.05]); xlim([0 50])
         set(gcf,'color','w'); grid on
@@ -265,6 +263,7 @@ elseif multiPer == 1
         legend({'1pm Drop Line','6pm Drop Line','1pm Pole-to-pole Line', '6pm Pole-to-pole Line'},'Location','Southeast')
         title('Line current')
         set(gcf,'color','w'); grid on
+        end
     end
 end
 end

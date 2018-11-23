@@ -10,10 +10,11 @@ multiPer = 1; % 1: multiperiod model, 0: discretised model
 per = 26; % for discretised model, which period to test? 26: 1pm (30min intervals) 
 OID_model = 2; % 1: run Guggilam OID model, 2: run Volt/Var droop control model  
 plotting = 0; % 1: YES, 0: NO 
-saveRes = 0; % 0: don't save 1: save for single location, 2: save losses for random locations
+saveRes = 1; % 0: don't save 1: save for single location, 2: save losses for random locations
 %solarCap = [1 2 2.5]; % solar PV capacity multiplier
 %solarCap = 2; i = 1; % solar PV capacity multiplier 
-solarCap = 0:0.3:4;% i = 21;
+%solarCap = 0:0.15:3.6;% 25 scenario
+solarCap = 0:0.15:3.6;% 25 scenario
 nRandLoc = 1; % No of scnearios with rand location 
 nRandCap = length(solarCap); % No of penetration scnearios 
 % Defines the number of periods and allocates memory
@@ -67,24 +68,27 @@ elseif OID_model == 2
     store_VAR_Pcap = cell(1, nRandCap); % Pav 
     store_VAR_Pinj = cell(1, nRandCap); %Sinj real
     store_VAR_PF = cell(1, nRandCap); %Sinj real
-    store_VAR_PcHH = cell(nRandLoc, nRandCap);
+    store_VAR_PcHH = cell(nRandLoc, nRandCap); 
 end
 %% No of Scenarios
 for i = 1 : nRandCap
     rng default % generates the same random scenarios
     PVsizeVec = [5.52 5.7 9.0 9.0 9.0 5.7 9.0 5.7 5.52 5.52 5.7 9.0]; % a vector with PV systems
-    PVsysEff = 0.77;
+    PVsysEff = 0.77; 
+    PVcap = PVsizeVec*PVsysEff; 
+    testCase = IEEE_18BUS_PV; 
     % No of Random Locations 
-    for k = 1 : nRandLoc
-        permVec = randperm(12); % returns a row vector containing a random permutation of the integers from 1 to n inclusive.
-        PVsizeVec = PVsizeVec(permVec)
-        testCase = IEEE_18BUS_PV; 
-        PVcap = PVsizeVec*PVsysEff;
+    for k = 1 : nRandLoc 
+        if nRandLoc > 1 
+            permVec = randperm(12); % returns a row vector containing a random permutation of the integers from 1 to n inclusive.
+            PVsizeVec = PVsizeVec(permVec) 
+            PVcap = PVsizeVec*PVsysEff; 
+        end
         % ===============
         % testCase = matpower_LV_semiurban; % works fine
         % testCase = matpower_rural; % that's a big one, only MatPower
         % network2 = networkViz(testCase); % network viz
-        % Load Data
+        %% Load Data
         [solar, solarTotal, solarGen, loadHH, loadTotal, timestamp, penetration, nBuses] = dataInput(testCase, solarCap(i), PVcap);
         %% Guggilam OID model
         if OID_model == 1
@@ -135,11 +139,11 @@ for i = 1 : nRandCap
             % saves results for random locations
             elseif saveRes == 2
                 OID_relocation_I2R = table(store_Gug_I2R); % 5x41 times x scenarios
-                save('C:\Users\plus0002\OneDrive\PhD\MatlabResults\OID_relocation_I2R.mat', 'OID_relocation_I2R')
+                save('C:\Users\plus0002\OneDrive\PhD\DTUnew\OID_relocation_I2R.mat', 'OID_relocation_I2R')
                 OID_relocation_Pc = table(store_Gug_PcHH); % 1x41
-                save('C:\Users\plus0002\OneDrive\PhD\MatlabResults\OID_relocation_Pc.mat', 'OID_relocation_Pc')
+                save('C:\Users\plus0002\OneDrive\PhD\DTUnew\OID_relocation_Pc.mat', 'OID_relocation_Pc')
                 OID_relocation_Pen = table(store_Gug_Penet'); % 1 x 41
-                save('C:\Users\plus0002\OneDrive\PhD\MatlabResults\OID_relocation_Pen.mat', 'OID_relocation_Pen')
+                save('C:\Users\plus0002\OneDrive\PhD\DTUnew\OID_relocation_Pen.mat', 'OID_relocation_Pen')
             end
             % Volt/VAR droop model
         elseif OID_model == 2
@@ -178,11 +182,11 @@ for i = 1 : nRandCap
                 save('VAR_penet_1pm.mat', 'VAR_penet_1pm')
              elseif saveRes == 2
                 VAR_relocation_I2R = table(store_VAR_I2R); % 5x41 times x scenarios
-                save('VAR_relocation_I2R.mat', 'VAR_relocation_I2R')
+                save('C:\Users\plus0002\Documents\VAR_relocation_I2R.mat', 'VAR_relocation_I2R')
                 VAR_relocation_Pc = table(store_VAR_PcHH); % 1x41
-                save('VAR_relocation_Pc.mat', 'VAR_relocation_Pc')
+                save('C:\Users\plus0002\Documents\VAR_relocation_Pc.mat', 'VAR_relocation_Pc')
                 VAR_relocation_Pen = table(store_VAR_Penet'); % 1 x 41
-                save('VAR_relocation_Pen.mat', 'VAR_relocation_Pen')
+                save('C:\Users\plus0002\Documents\VAR_relocation_Pen.mat', 'VAR_relocation_Pen')
             end
         end
     end
