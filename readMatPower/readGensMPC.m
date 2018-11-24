@@ -14,7 +14,7 @@ Qd = testCase.bus(2:end,4)/baseMVA; % reactive power w/o SLACK BUS
 Pav = zeros(nBuses-1,1); % solar PV vector
 Sinj = zeros(nBuses-1,1); % inverter capacity vector 
 %% Active and Reactive Power Costs 
-a = 5; b = 10; c = 2; d = 4;
+a = 10; b = 5; c = 2; d = 1;
 % Active Power Quadratic costs is defined as follows
 A = 0.5 * eye(nBuses-1) * a; % x*A*x' 
 B = b * ones(nBuses-1,1);

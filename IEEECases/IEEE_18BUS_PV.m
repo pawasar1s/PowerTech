@@ -90,7 +90,7 @@ x_Pline = x_poleLine/1000*polePoleL; % [p.u.]
 % opf.flow_lim option determines if branch limits are in S,P or I. 
 % === SHIFT - trasnformer phase shift angle (degrees), positive -> delay
 
-maxI = 300; % 100A fpr a 3-phase system, 32A for one-phase
+maxI = 500; % 100A fpr a 3-phase system, 32A for one-phase
 mpc.branch = [
 1	3	r_Pline	x_Pline     0	maxI	0	0	0	0	1	-360	360; % line from slack bus has no impedance 
 3	2	r_Dline	x_Dline	    0	maxI	0	0	0	0	1	-360	360;

@@ -89,10 +89,10 @@ legend({'0% OID & Volt/VAr', '90% OID','90% Volt/VAr','180% OID','180% Volt/VAr'
     '270% OID','270% Volt/VAr', '360% OID','360% Volt/VAr'},'Location','Northeast')
 title('Pole-to-Pole Line Losses'); set(gcf,'color','w'); grid on
 %%
-figure(121)
-plot(1:nScen, OID_PQ_1pm.store_Gug_Pg(:,:))
-hold on 
-plot(1:nScen, OID_PQ_1pm.store_Gug_Pc(:,:))
+% figure(121)
+% plot(1:nScen, OID_PQ_1pm.store_Gug_Pg(:,:))
+% hold on 
+% plot(1:nScen, OID_PQ_1pm.store_Gug_Pc(:,:))
 %% FIGURE 3: Total Curtailment against penetration OID vs Volt/VAR
 figure(108)
 cov1 = bar([OID_PQ_1pm.store_Gug_Pc', VAR_PQ_1pm.store_VAR_Pc']);

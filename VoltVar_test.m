@@ -1,4 +1,4 @@
-function [V, Pcurt, Qc, Vmax, Gug_V, Gug_I2R, Gug_ITot, Gug_Vdrop, Gug_Preal, Gug_Sreal, Gug_PgTot, Gug_QgTot, Gug_I2RTot, Gug_PcTot, Gug_QcTot, Gug_max_Scap, Gug_max_Pcap, Gug_Pinj, Gug_check_PF, Gug_PcHH] = VoltVar(testCase, T, T0, solar, loadHH, multiPer, per, plotting) 
+%function [V, Pcurt, Qc, Vmax, Gug_V, Gug_I2R, Gug_ITot, Gug_Vdrop, Gug_Preal, Gug_Sreal, Gug_PgTot, Gug_QgTot, Gug_I2RTot, Gug_PcTot, Gug_QcTot, Gug_max_Scap, Gug_max_Pcap, Gug_Pinj, Gug_check_PF, Gug_PcHH] = VoltVar(testCase, T, T0, solar, loadHH, multiPer, per, plotting) 
 [~, ZBus, Ysc, Aa, Ymn, Imax, nBuses, ~, nB] = readLinesMPC(testCase);
 [~, Vnom, Vmin, Vmax, V0, Pd, Qd, Pcap, Scap, A, B, C, D, PF] = readGensMPC(testCase, nBuses);
 %deadband = 0.02;
@@ -130,8 +130,8 @@ elseif multiPer == 1
         % Solar PV constraints
         0 <= Pcurt <= Pcap; %Eq.9
         Qc == slope.*(real(V)-Vnom(2)); % droop control w/o deadband
-        %abs(Qc) <= tan(acos(PF))*(Pcap-Pcurt); 
-        (Qc).^2 <= (Scap).^2-(Pcap-Pcurt).^2; 
+        abs(Qc) <= tan(acos(PF))*(Pcap-Pcurt); 
+        %(Qc).^2 <= (Scap).^2-(Pcap-Pcurt).^2; 
         %Qc(idxPV-1) == slope(idxPV-1).*((V(idxPV-1))-Vnom(2)+deadband/2); % droop control with deadband
         % Power balance eq.
         real(V) == Vnom + real(ZBus)*(Pcap - Pcurt - Pd) + imag(ZBus)*(Qc - Qd); 
@@ -267,4 +267,4 @@ elseif multiPer == 1
         end
     end
 end
-end
+%end

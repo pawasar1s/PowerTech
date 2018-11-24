@@ -13,8 +13,8 @@ plotting = 0; % 1: YES, 0: NO
 saveRes = 1; % 0: don't save 1: save for single location, 2: save losses for random locations
 %solarCap = [1 2 2.5]; % solar PV capacity multiplier
 %solarCap = 2; i = 1; % solar PV capacity multiplier 
-%solarCap = 0:0.15:3.6;% 25 scenario
 solarCap = 0:0.15:3.6;% 25 scenario
+%solarCap = 0:0.15:3.6;% 25 scenario
 nRandLoc = 1; % No of scnearios with rand location 
 nRandCap = length(solarCap); % No of penetration scnearios 
 % Defines the number of periods and allocates memory
@@ -128,7 +128,7 @@ for i = 1 : nRandCap
                     save('noLim_capPen.mat', 'noLim_capPen')
                 elseif Vmax(2) == 1.05
                     OID_V_1pm = table( store_Gug_V18, store_Gug_V9, store_Gug_V3); % 1x41 times x scenarios
-                    save('OID_V_1pm.mat', 'OID_V_1pm')
+                    save('OID_V_1pm_no.mat', 'OID_V_1pm')
                     OID_PQ_1pm = table(store_Gug_Pc, store_Gug_Qc, store_Gug_Pg, store_Gug_Qg); % 1x41
                     save('OID_PQ_1pm.mat', 'OID_PQ_1pm')
                     OID_I2R_1pm = table(store_Gug_I2R, store_Gug_I, store_Gug_Preal, store_Gug_Sreal, store_Gug_V, store_Gug_Vdrop, store_Gug_Scap, store_Gug_Pcap, store_Gug_Pinj, store_Gug_PF, store_Gug_PcHH); % 1x41 cell
@@ -182,11 +182,11 @@ for i = 1 : nRandCap
                 save('VAR_penet_1pm.mat', 'VAR_penet_1pm')
              elseif saveRes == 2
                 VAR_relocation_I2R = table(store_VAR_I2R); % 5x41 times x scenarios
-                save('C:\Users\plus0002\Documents\VAR_relocation_I2R.mat', 'VAR_relocation_I2R')
+                save('C:\Users\plus0002\OneDrive\PhD\DTUnew\VAR_relocation_I2R.mat', 'VAR_relocation_I2R')
                 VAR_relocation_Pc = table(store_VAR_PcHH); % 1x41
-                save('C:\Users\plus0002\Documents\VAR_relocation_Pc.mat', 'VAR_relocation_Pc')
+                save('C:\Users\plus0002\OneDrive\PhD\DTUnew\VAR_relocation_Pc.mat', 'VAR_relocation_Pc')
                 VAR_relocation_Pen = table(store_VAR_Penet'); % 1 x 41
-                save('C:\Users\plus0002\Documents\VAR_relocation_Pen.mat', 'VAR_relocation_Pen')
+                save('C:\Users\plus0002\OneDrive\PhD\DTUnew\VAR_relocation_Pen.mat', 'VAR_relocation_Pen')
             end
         end
     end

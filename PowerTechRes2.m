@@ -1,5 +1,5 @@
 %% load data
-clear all;
+clear all; close all;
 load('OID_relocation_I2R.mat');
 load('OID_relocation_Pc.mat');
 load('OID_relocation_Pen.mat');
