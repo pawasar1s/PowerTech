@@ -16,7 +16,7 @@ Qd = zeros(nBuses-1,1);
 Pav = zeros(nBuses-1,1); % solar PV vector
 Sinj = zeros(nBuses-1,1); % inverter capacity vector 
 %% Active and Reactive Power Costs 
-a = 10; b = 2; c = 5; d = 1;
+a = 5; b = 1; c = 0; d = 0;
 % Active Power Quadratic costs is defined as follows
 A = 0.5 * eye(nBuses-1) * a; % x*A*x' 
 B = b * ones(nBuses-1,1);

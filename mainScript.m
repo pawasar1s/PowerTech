@@ -11,8 +11,8 @@ per = 13; % for discretised model, which period to test? 26: 1pm (30min interval
 if multiPer == 1
     T = 13; % 26 is 1pm, set to 26 for complete results
     T0 = 13; % set to 26 for complete results, 1:48 used only during manual code validation 
-end 
-    k = 2; kappa = [0.01 0.05 0.1 0.125]; 
+end     
+    k = 2; kappa = [0.01 0.025 0.1 0.125]; 
     %%
 for g = 1 : 3  
     OID_model = g; % 1: run Guggilam OID model, 2: run Volt/Var droop control model
@@ -24,7 +24,7 @@ for g = 1 : 3
     nRandCap = length(solarCap); % No of penetration scnearios
     %% ================== Allocate empty matrices ===========
     nRandLoc = 1; % No of scnearios with rand location
-    if OID_model == 1 || 2
+    if OID_model == 1 || 2 
         store_Gug_V18 = complex(zeros(T-T0+1, nRandCap)); % voltage vector, house 18
         store_Gug_V9 = complex(zeros(T-T0+1, nRandCap)); % voltage vector, house 9
         store_Gug_V3 = complex(zeros(T-T0+1, nRandCap)); % voltage vector, house 3

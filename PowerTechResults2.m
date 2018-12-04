@@ -1,18 +1,18 @@
 scenn = 8;
-figure(4); plot(1:18, OID_I2R_1pm.store_Gug_Preal{scenn},'r'); 
+figure(4); plot(1:18, OID_I2R_1pm.store_Gug_Preal{scenn}*Sbase,'r'); 
 hold on;
-plot(1:18, OID_I2R_1pm.store_Gug_Sreal{scenn},'k--'); 
-plot(1:18, OID_I2R_1pm.store_Gug_Pinj{scenn},'b');
-ylim([0 0.14])
+plot(1:18, OID_I2R_1pm.store_Gug_Sreal{scenn}*Sbase,'k--'); 
+plot(1:18, OID_I2R_1pm.store_Gug_Pinj{scenn}*Sbase,'b');
+%([0 0.14])
 title('OID')
 legend('Preal','Sreal','Pinj')
 %%
 figure(3); 
-plot(1:18, VAR_I2R_1pm.store_VAR_Preal{scenn},'r'); 
+plot(1:18, VAR_I2R_1pm.store_VAR_Preal{scenn}*Sbase,'r'); 
 hold on;
-plot(1:18, VAR_I2R_1pm.store_VAR_Sreal{scenn},'k--'); 
-plot(1:18, VAR_I2R_1pm.store_VAR_Pinj{scenn},'b');
-ylim([0 0.14])
+plot(1:18, VAR_I2R_1pm.store_VAR_Sreal{scenn}*Sbase,'k--'); 
+plot(1:18, VAR_I2R_1pm.store_VAR_Pinj{scenn}*Sbase,'b');
+%ylim([0 0.14])
 title('VAR')
 legend('Preal','Sreal','Pinj')
 %%

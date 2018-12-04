@@ -132,10 +132,10 @@ elseif multiPer == 1
         subject to
         % Solar PV constraints
         0 <= Pcurt <= Pcap; %Eq.9
-        %Qc <= slope.*(real(V)-Vnom(2)); % droop control w/o deadband
+        Qc <= slope.*(real(V)-Vnom(2)); % droop control w/o deadband
         Qc == slope.*(real(V)-Vnom(2)); % droop control w/o deadband
-        %abs(Qc) <= tan(acos(PF))*(Pcap-Pcurt); 
-        (Qc).^2 <= (Scap).^2-(Pcap-Pcurt).^2; 
+        abs(Qc) <= tan(acos(PF))*(Pcap-Pcurt); 
+        %(Qc).^2 <= (Scap).^2-(Pcap-Pcurt).^2; 
         %Qc(idxPV-1) == slope(idxPV-1).*((V(idxPV-1))-Vnom(2)+deadband/2); % droop control with deadband
         % Power balance eq.
         real(V) == Vnom + real(ZBus)*(Pcap - Pcurt - Pd) + imag(ZBus)*(Qc - Qd); 
