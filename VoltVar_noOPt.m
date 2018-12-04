@@ -1,4 +1,4 @@
-function [V, Pcurt, Qc, Vmax, Gug_V, Gug_I2R, Gug_ITot, Gug_Vdrop, Gug_Preal, Gug_Sreal, Gug_PgTot, Gug_QgTot, Gug_I2RTot, Gug_PcTot, Gug_QcTot, Gug_max_Scap, Gug_max_Pcap, Gug_Pinj, Gug_check_PF, Gug_PcHH] = VoltVar(testCase, T, T0, solar, loadHH, multiPer, per, plotting, PVcap, Pd12) 
+%function [V, Pcurt, Qc, Vmax, Gug_V, Gug_I2R, Gug_ITot, Gug_Vdrop, Gug_Preal, Gug_Sreal, Gug_PgTot, Gug_QgTot, Gug_I2RTot, Gug_PcTot, Gug_QcTot, Gug_max_Scap, Gug_max_Pcap, Gug_Pinj, Gug_check_PF, Gug_PcHH] = VoltVar(testCase, T, T0, solar, loadHH, multiPer, per, plotting, PVcap, Pd12) 
 [~, ZBus, Ysc, Aa, Ymn, Imax, nBuses, ~, nB] = readLinesMPC(testCase);
 [~, Vnom, Vmin, Vmax, V0, Pd, Qd, Pcap, Scap, A, B, C, D, PF] = readGensMPC(testCase, nBuses);
 %deadband = 0.02;
@@ -94,7 +94,6 @@ elseif multiPer == 1
     Gug_check_PF = zeros(T-T0+1,size(mpc.bus,1)-1); % FOR GRAPHS: PF
     %
     Gug_check_slope = complex(zeros(T-T0+1,size(mpc.bus,1)-1)); % FOR GRAPHS: slope
-    %Vmax = 1.09;
     for t = T0 : T 
         % update solar data
         if nPV ~= 0
@@ -108,7 +107,7 @@ elseif multiPer == 1
         % slope with deadband
         %slope = Qmin./(V0 + deadband/2 - Vmax(2));
         % slope without deadband
-        slope = 2*Qmin./(Vmax-Vmin(2));
+        slope = 2*Qmin./(Vmax(2)-Vmin(2));
         Gug_check_slope(t-T0+1,:) = slope; % FOR GRAPHS: slope
         % update load data
         Pd(idxPV-1) = Pd12(t,idxPV-1)'/baseMVA; % Pg
@@ -117,36 +116,41 @@ elseif multiPer == 1
         cvx_clear % clears any model being constructed
         cvx_begin
         variable V(nBuses-1,1) complex; % Voltage vector [p.u.]
-        variable Pcurt(nBuses-1,1); % Curtailed PV vector [kW]
-        variable Qc(nBuses-1,1); % Reative power absorbed/produced by inverter [kVA]
+        %variable Pcurt(nBuses-1,1); % Curtailed PV vector [kW]
+        %variable Qc(nBuses-1,1); % Reative power absorbed/produced by inverter [kVA]
     % OBJECTIVE FUNCTION =============================================
-        Obj1 = 0;
         Obj1_Vec = [real(V0); real(V); imag(V0); imag(V)];
         Obj1 = 0.5 * quad_form(Obj1_Vec, Ymn); %Eq.1
-        Obj2 = 0.5 * quad_form(Pcurt, A) + 0.5 * quad_form(Qc, C) + B' * Pcurt + D' * abs(Qc); %Eq.2
-        Obj3 = 0;
-        %Obj3_Vec = eye(nB) - (1/nB).*ones(nB,1)*ones(1,nB);
-        %Obj3 = norm(Obj3_Vec*diag(V),2) %Eq.3
-        minimize(Obj1 + Obj2 + Obj3) % Eq.4
+        %Obj2 = 0.5 * quad_form(Pcurt, A) + quad_form(Qc, C) + B' * Pcurt + D' * abs(Qc); %Eq.2
+        Obj3_Vec = eye(nB) - (1/nB).*ones(nB,1)*ones(1,nB);
+        Obj3 = norm(Obj3_Vec*diag(V),2) %Eq.3
+        minimize(Obj1 + Obj3) % Eq.4
     % CONSTRAINTS ====================================================
         subject to
         % Solar PV constraints
-        0 <= Pcurt <= Pcap; %Eq.9
+        %0 <= Pcurt <= Pcap; %Eq.9
         %Qc <= slope.*(real(V)-Vnom(2)); % droop control w/o deadband
-        Qc == slope.*(real(V)-Vnom(2)); % droop control w/o deadband
+        %slope.*(real(V)-Vnom(2)) == Qc; % droop control w/o deadband
         %abs(Qc) <= tan(acos(PF))*(Pcap-Pcurt); 
-        (Qc).^2 <= (Scap).^2-(Pcap-Pcurt).^2; 
+        %(Qc).^2 <= (Scap).^2-(Pcap-Pcurt).^2; 
         %Qc(idxPV-1) == slope(idxPV-1).*((V(idxPV-1))-Vnom(2)+deadband/2); % droop control with deadband
         % Power balance eq.
-        real(V) == Vnom + real(ZBus)*(Pcap - Pcurt - Pd) + imag(ZBus)*(Qc - Qd); 
-        imag(V) == imag(ZBus)*(Pcap - Pcurt - Pd) - real(ZBus)*(Qc - Qd); 
+        real(V) == Vnom + real(ZBus)*(Pcap - Pd) + imag(ZBus)*(Qd); 
+        imag(V) == imag(ZBus)*(Pcap - Pd) - real(ZBus)*(Qd); 
         % Voltage magnitude limits
-        Vmin <= Vnom + real(ZBus)*(Pcap - Pcurt - Pd)+ imag(ZBus)*(Qc - Qd) <= Vmax; 
+        Vmin <= Vnom + real(ZBus)*(Pcap - Pd)+ imag(ZBus)*(Qd) <= Vmax; 
         % Line limit constraint
-        Delta_V = Aa * [V0; V]; % Delta_V: votlage drop
-        -Imax <= real(Ysc.*conj(Delta_V)) <= Imax; % Ysc: line admittance
+        %Delta_V = Aa * [V0; V]; % Delta_V: votlage drop
+        %-Imax <= real(Ysc.*conj(Delta_V)) <= Imax; % Ysc: line admittance
         cvx_end
     % SAVE RESULTS ===========================================    
+        if Qc <= 1.06
+            Qc = slope.*(real(V)-Vnom(2)); % droop control w/o deadband
+        else 
+            Qc = Qmin;
+        end
+        Pcurt = Pcap - sqrt((Scap).^2 - (Qc).^2)
+        
         Vfull = [V0; V];
         Gug_V(t-T0+1,:) = Vfull; % voltage 
         [Gug_I2R, Gug_Vdrop(t-T0+1,:), Gug_ITot(t-T0+1,:)] = linesLoss(mpc, Vfull, nBuses); % losses, voltage drop, line current
@@ -340,4 +344,4 @@ elseif multiPer == 1
         end
     end
 end
-end
+%end

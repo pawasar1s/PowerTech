@@ -14,7 +14,7 @@ mpc.version = '2';
 
 %%-----  Power Flow Data  -----%%
 %% system kVA base
-mbase = 14000; % [kVA]
+mbase = 14.4; % [kVA]
 mpc.baseMVA = mbase; % [kVA]
 % based on 75kVA distribution transformer 
 %% bus data
@@ -189,9 +189,9 @@ mpc.gencost = [
 %COST         = 5;    %% parameters defining total cost function begin in this col
 %% convert branch impedances from Ohms to p.u.
 mpc.Vbase = mpc.bus(1,10); % from kV to 240 Volts
-mpc.Sbase = mpc.baseMVA; % from kVA to VA 
+mpc.Sbase = mpc.baseMVA*1000; % from kVA to VA 
 mpc.branch(:, [3, 4]) = mpc.branch(:, [3, 4]) /(mpc.Vbase^2 / mpc.Sbase); % in p.u.
-sss = mpc.branch(:, [3, 4]) /(mpc.Vbase^2 / mpc.Sbase); % in p.u.
+%sss = mpc.branch(:, [3, 4]) /(mpc.Vbase^2 / mpc.Sbase); % in p.u.
 mpc.Ibase = mpc.Sbase/mpc.Vbase; 
 mpc.branch(:, 6) =  mpc.branch(:, 6) / mpc.Ibase; % in p.u. 
 %% convert loads from kW to MW and kVAR to MVAR

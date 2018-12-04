@@ -9,7 +9,7 @@ end
 % run ACOPF
 if multiPer == 0
     tic;
-    mpc = testCase;
+    mpc = IEEE_9BUS_PV;
     nPV = size(mpc.gen,1)-1; % No of PV systems
     idxHH = find(mpc.bus(:,2) == 2); % find index for buses with PV systems
     % update solar PV data

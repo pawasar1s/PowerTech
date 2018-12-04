@@ -8,13 +8,15 @@ Vmax = testCase.bus(2:end,12);
 nGen = size(testCase.gen,1); % number of generators
 baseMVA = testCase.baseMVA; % power rating
 % Demand 
-Pd = testCase.bus(2:end,3)/baseMVA; % active power w/o SLACK BUS
-Qd = testCase.bus(2:end,4)/baseMVA; % reactive power w/o SLACK BUS
+%Pd = testCase.bus(2:end,3)/baseMVA; % active power w/o SLACK BUS
+%Qd = testCase.bus(2:end,4)/baseMVA; % reactive power w/o SLACK BUS
+Pd = zeros(nBuses-1,1);
+Qd = zeros(nBuses-1,1);
 %% Defining Pav and Sinj
 Pav = zeros(nBuses-1,1); % solar PV vector
 Sinj = zeros(nBuses-1,1); % inverter capacity vector 
 %% Active and Reactive Power Costs 
-a = 10; b = 5; c = 2; d = 1;
+a = 10; b = 2; c = 5; d = 1;
 % Active Power Quadratic costs is defined as follows
 A = 0.5 * eye(nBuses-1) * a; % x*A*x' 
 B = b * ones(nBuses-1,1);

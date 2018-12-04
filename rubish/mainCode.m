@@ -1,17 +1,20 @@
 clear; clc; 
 addpath(genpath('matpower7.0b1')) 
-addpath(genpath('IEEECases')); addpath(genpath('readMatPower'));
-addpath(genpath('C:\Users\plus0002\OneDrive\PhD\DTUproject\cvx')) 
+addpath(genpath('IEEECases')); addpath(genpath('readMatPower'));addpath(genpath('rubish'));
+addpath(genpath('cvx')) 
+%%
 % checkcode mainCode -cyc % -> Applies McCabe Complexity (should keep below 10)
 %  figure; imagesc (abs (inv (YBus)))
 per = 12;
 mpc = IEEE_18BUS; 
-[solarHH, loadHH, loadTotal, timestamp, T] = dataInput();
+solarCap = 1;
+PVcap = zeros(8,1);
+[solar, solarInstalled, solarGen, loadHH, loadTotal, timestamp, penetration, nBuses] = dataInput(mpc, solarCap, PVcap);
 idxHH = find(mpc.bus(:,2) == 2);
 mpc.bus(idxHH,3) = loadHH(per,:)'; % Pg
 mpc.bus(idxHH,4) = loadHH(per,:)'*0.6; % Qg
 %% AC OPF
-loadScen = [1]; 
+loadScen = 1; 
 changePd = 6; % No of Bus with demand change
 ACOPF_V = complex(zeros(size(mpc.bus,1),length(loadScen))); % Bus Voltage Vector 
 ACOPF_I2R = complex(zeros(size(mpc.bus,1)-1,length(loadScen))); % Line Loss Vector
@@ -25,6 +28,7 @@ for l = 1 : length(loadScen)
     %ACOPF_I(:,l) = linesCurrent(mpc, ACOPF_V); 
 end
 %% Defining Network Topology
+
 [genMatrix,nGen, genLoc, PMin, PMax, QMin, QMax, nBuses, busLoc, ~, ~, Pd, Qd] = readGensMPC_old(mpc);
 [linesMatFrom, linesMatTo, nLines, linesFrom, linesTo, R, X, Z, Y, Yline, lineMaxFlow, OriginBusLoc] = readLinesMPC_old(mpc);
 % adds bus names if given in MatPower file 

@@ -1,4 +1,4 @@
-function mpc = IEEE_18BUS
+    function mpc = IEEE_18BUS
 %CASE9    Power flow data for 9 bus, 3 generator case.
 %   Please see CASEFORMAT for details on the case file format.
 %

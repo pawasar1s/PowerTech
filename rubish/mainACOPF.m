@@ -1,11 +1,10 @@
 clear; clc; close all; 
-load('loadProfile.mat', 'all30min'); load('solarProfile.mat') % load input files
+load('loadData.mat', 'loadData'); load('solarProfile.mat') % load input files
 addpath(genpath('matpower7.0b1')); addpath(genpath('IEEECases')); addpath(genpath('gurobi')); 
-addpath(genpath('cvx')); addpath(genpath('readMatPower')); 
-rmpath('cvx/lib/narginchk_') % remove this function to avoid a potential name conflict
+addpath(genpath('readMatPower')); 
 %% inputs
-loadtable = all30min(1:48,[2 9:19]);
-timestamp = table2array(all30min(1:48,1));
+loadtable = loadData(1:48,[2 9:19]);
+timestamp = table2array(loadData(1:48,1));
 loadHH = table2array(loadtable)*2;
 solarHH = table2array(solarHH);
 loadTotal = sum(loadHH,2); % Total power demand 
@@ -14,7 +13,7 @@ T = length(solarHH); % number of periods
 plotting = 1; % YES = 1, NO = 0
 %% ACOPF
 tic; 
-mpc = IEEE_18BUS_PV; % AC OPF
+mpc = IEEE_18BUS; % AC OPF
 ACOPF_V = complex(zeros(T,size(mpc.bus,1))); % Bus Voltage Vector 
 ACOPF_I2R = complex(zeros(T,size(mpc.bus,1)-1)); % Line Loss Vector
 ACOPF_f = zeros(T,1); % Objective Function Vector 
@@ -46,8 +45,9 @@ toc;
 % ACOPF.om % shows the list of variables and constraints 
 %% Branch Data
 mpc = IEEE_18BUS_PV; % AC OPF
-[genMatrix,nGen, genLoc, PMin, PMax, QMin, QMax, nBuses, busLoc, Vmin, Vmax, Pd, Qd] = readGensMPC(mpc);
-[linesMatFrom, linesMatTo, nLines, linesFrom, linesTo, R, X, Z, Ybus, Yline, lineMaxFlow, OriginBusLoc] = readLinesMPC(mpc);
+nBuses = size(mpc.bus,1)-1;
+[nGen, Vnom, Vmin, Vmax, V0, Pd, Qd, Pav, Sinj, A, B, C, D, PF] = readGensMPC(mpc, nBuses);
+[YBus, ZBus, Ysc, Aa, Ymn, Imax, nBuses, nLines, nB] = readLinesMPC(mpc);
 % Network Vizualisation
 %network2 = networkViz(mpc,linesFrom, linesTo, Z);
 %% save voltages 

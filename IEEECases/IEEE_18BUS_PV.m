@@ -18,43 +18,44 @@ mbase = 75; % [kVA]
 mpc.baseMVA = mbase; % [kVA]
 % based on 75kVA distribution transformer 
 %% bus data
-Pload = 2;
-Qload = 1.4;
-Vmin = 0.95;
-Vmax = 1.05;
+Pload = 0;
+Qload = 0;
+Vmin = 0.9;
+Vmax = 1.05; 
 %	bus_i	type	Pd	Qd	Gs	Bs	area	Vm	Va	baseKV	zone	Vmax	Vmin
 % Vm - reference magnitude 
 % Va - reference angle. 
+Vinit = 240;
 mpc.bus = [
-1	3	0       0       0	0	1	1	0	0.240   1	1	    1; % grid
-2	2	Pload	Qload	0	0	1	1	0	0.240	1	Vmax	Vmin;
-3	1	0       0       0	0	1	1	0	0.240	1	Vmax	Vmin;
-4	2	Pload	Qload	0	0	1	1	0	0.240	1	Vmax	Vmin;
-5	2	Pload	Qload	0	0	1	1	0	0.240	1	Vmax	Vmin;
-6	1	0       0       0	0	1	1	0	0.240	1	Vmax	Vmin;
-7	2	Pload   Qload	0	0	1	1	0	0.240	1	Vmax	Vmin;
-8	2	Pload	Qload	0	0	1	1	0	0.240	1	Vmax	Vmin;
-9	1	0       0       0	0	1	1	0	0.240	1	Vmax	Vmin;
-10	2	Pload   Qload	0	0	1	1	0	0.240	1	Vmax	Vmin;
-11	2	Pload	Qload	0	0	1	1	0	0.240	1	Vmax	Vmin;
-12	1	0       0       0	0	1	1	0	0.240	1	Vmax	Vmin;
-13	2	Pload   Qload	0	0	1	1	0	0.240	1	Vmax	Vmin;
-14	2	Pload	Qload	0	0	1	1	0	0.240	1	Vmax	Vmin;
-15	1	0       0       0	0	1	1	0	0.240	1	Vmax	Vmin;
-16	2	Pload   Qload	0	0	1	1	0	0.240	1	Vmax	Vmin;
-17	2	Pload	Qload	0	0	1	1	0	0.240	1	Vmax	Vmin;
-18	1	0       0       0	0	1	1	0	0.240	1	Vmax	Vmin;
-19	2	Pload	Qload	0	0	1	1	0	0.240	1	Vmax	Vmin;
+1	3	0       0       0	0	1	1	0	Vinit   1	1	    1; % grid
+2	2	Pload	Qload	0	0	1	1	0	Vinit	1	Vmax	Vmin;
+3	1	0       0       0	0	1	1	0	Vinit	1	Vmax	Vmin;
+4	2	Pload	Qload	0	0	1	1	0	Vinit	1	Vmax	Vmin;
+5	2	Pload	Qload	0	0	1	1	0	Vinit	1	Vmax	Vmin;
+6	1	0       0       0	0	1	1	0	Vinit	1	Vmax	Vmin;
+7	2	Pload   Qload	0	0	1	1	0	Vinit	1	Vmax	Vmin;
+8	2	Pload	Qload	0	0	1	1	0	Vinit	1	Vmax	Vmin;
+9	1	0       0       0	0	1	1	0	Vinit	1	Vmax	Vmin;
+10	2	Pload   Qload	0	0	1	1	0	Vinit	1	Vmax	Vmin;
+11	2	Pload	Qload	0	0	1	1	0	Vinit	1	Vmax	Vmin;
+12	1	0       0       0	0	1	1	0	Vinit	1	Vmax	Vmin;
+13	2	Pload   Qload	0	0	1	1	0	Vinit	1	Vmax	Vmin;
+14	2	Pload	Qload	0	0	1	1	0	Vinit	1	Vmax	Vmin;
+15	1	0       0       0	0	1	1	0	Vinit	1	Vmax	Vmin;
+16	2	Pload   Qload	0	0	1	1	0	Vinit	1	Vmax	Vmin;
+17	2	Pload	Qload	0	0	1	1	0	Vinit	1	Vmax	Vmin;
+18	1	0       0       0	0	1	1	0	Vinit	1	Vmax	Vmin;
+19	2	Pload	Qload	0	0	1	1	0	Vinit	1	Vmax	Vmin;
 ];
 %     10 BASE_KV     baseKV, base voltage (kV)
 % 
 %% generator data
-PVeff = 0.77;
+PVeff = 0.8;
 % Pg Qg are initial serach values  
 %	bus	Pg	Qg	Qmax	Qmin	Vg	mBase	status	PmaxDC[kW]	PminDC[kW]	Pc1	Pc2	Qc1min	Qc1max	Qc2min	Qc2max	ramp_agc	ramp_10	ramp_30	ramp_q	apf
 % Vg - initial voltage magnitude
 mpc.gen = [
-	1	0	0   1000	-1000	  1	1	mbase     1000        -1000 0	0	0	0	0	0	0	0	0	0	0;
+	1	0	0   1000	    -1000	        1	1	mbase     750          -750   0	0	0	0	0	0	0	0	0	0	0;
     2	0	0	5.52*PVeff	-5.52*PVeff     1	1	mbase     5.52*PVeff	0	0	0	0	0	0	0	0	0	0	0	0;
     4	0	0	5.70*PVeff	-5.70*PVeff     1	1	mbase     5.70*PVeff	0	0	0	0	0	0	0	0	0	0	0	0;
     5	0	0	9.00*PVeff	-9.00*PVeff     1	1	mbase     9.00*PVeff	0	0	0	0	0	0	0	0	0	0	0	0;
@@ -70,16 +71,25 @@ mpc.gen = [
 ];
 
 %% branch data
-dropLineL = 20; % [m]
-polePoleL = 50; % [m]
+dropLineL = 25; % [m]
+polePoleL = 75; % [m]
+%r_dropLine = 0.549; % [Ohms/km]
+%%x_dropLine = 0.230 + 0.055; % [Ohms/km]
+%r_poleLine = 0.270; % [Ohms/km]
+%x_poleLine = 0.240 + 0.072; % [Ohms/km]
+f = 50;
 r_dropLine = 0.549; % [Ohms/km]
-x_dropLine = 0.230 + 0.055; % [Ohms/km]
+%xC_dropLine = 1/(2*pi*f*0.055*10^-1); % [mjuF/km]
+%xL_dropLine = 2*pi*f*0.230*10^-3; % [Ohms/km]
+%x_dropLine = xL_dropLine - xC_dropLine;
 r_poleLine = 0.270; % [Ohms/km]
-x_poleLine = 0.240 + 0.072; % [Ohms/km]
-r_Dline = r_dropLine/1000*dropLineL; % [p.u.]
-x_Dline = x_dropLine/1000*dropLineL; % [p.u.]
-r_Pline = r_poleLine/1000*polePoleL; % [p.u.]
-x_Pline = x_poleLine/1000*polePoleL; % [p.u.]
+%xC_poleLine = 1/(2*pi*f*0.072*10^-1);
+%xL_poleLine = 2*pi*f*0.240*10^-3;
+%x_poleLine = xL_poleLine - xC_poleLine;
+r_Dline = r_dropLine/1000*dropLineL; % [Ohms]
+x_Dline = r_dropLine/1000*dropLineL/3.5; % [Ohms]
+r_Pline = r_poleLine/1000*polePoleL; % [Ohms]
+x_Pline = r_poleLine/1000*polePoleL/3.5; % [Ohms]
 %	fbus	tbus	r	x	b	rateA	rateB	rateC	ratio	angle	status	angmin	angmax
 %[F_BUS,   T_BUS,BR_R,BR_X,BR_B,RATE_A  RATE_B, RATE_C, TAP,    SHIFT, BR_STATUS, PF,     QF,   PT, QT, MU_SF, MU_ST, ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
 % === RATE_A - branch flow limits, 0 represents unconstrained lined 
@@ -90,28 +100,29 @@ x_Pline = x_poleLine/1000*polePoleL; % [p.u.]
 % opf.flow_lim option determines if branch limits are in S,P or I. 
 % === SHIFT - trasnformer phase shift angle (degrees), positive -> delay
 
-maxI = 500; % 100A fpr a 3-phase system, 32A for one-phase
+Imaxp = 350; % 100A fpr a 3-phase system, 32A for one-phase
+Imaxd = 100;
 mpc.branch = [
-1	3	r_Pline	x_Pline     0	maxI	0	0	0	0	1	-360	360; % line from slack bus has no impedance 
-3	2	r_Dline	x_Dline	    0	maxI	0	0	0	0	1	-360	360;
-3	4	r_Dline	x_Dline     0	maxI	0	0	0	0	1	-360	360;
-3	6	r_Pline	x_Pline 	0	maxI	0	0	0	0	1	-360	360;
-6	5	r_Dline	x_Dline     0	maxI	0	0	0	0	1	-360	360;
-6	7	r_Dline	x_Dline     0	maxI	0	0	0	0	1	-360	360;
-6	9	r_Pline	x_Pline 	0	maxI	0	0	0	0	1	-360	360;
-9	8	r_Dline	x_Dline     0	maxI	0	0	0	0	1	-360	360;
-9	10	r_Dline	x_Dline     0	maxI	0	0	0	0	1	-360	360;
+1	3	r_Pline	x_Pline     0	312.5	    0	0	0	0	1	-360	360; % line from slack bus has no impedance 
+3	2	r_Dline	x_Dline	    0	Imaxd	0	0	0	0	1	-360	360;
+3	4	r_Dline	x_Dline     0	Imaxd	0	0	0	0	1	-360	360;
+3	6	r_Pline	x_Pline 	0	Imaxp	0	0	0	0	1	-360	360;
+6	5	r_Dline	x_Dline     0	Imaxd	0	0	0	0	1	-360	360;
+6	7	r_Dline	x_Dline     0	Imaxd	0	0	0	0	1	-360	360;
+6	9	r_Pline	x_Pline 	0	Imaxp	0	0	0	0	1	-360	360;
+9	8	r_Dline	x_Dline     0	Imaxd	0	0	0	0	1	-360	360;
+9	10	r_Dline	x_Dline     0	Imaxd	0	0	0	0	1	-360	360;
 % Line 10
-9	12	r_Pline	x_Pline 	0	maxI	0	0	0	0	1	-360	360;
+9	12	r_Pline	x_Pline 	0	Imaxp	0	0	0	0	1	-360	360;
 % Line 10
-12	11	r_Dline	x_Dline     0	maxI	0	0	0	0	1	-360	360;
-12	13	r_Dline	x_Dline     0	maxI	0	0	0	0	1	-360	360;
-12	15	r_Pline	x_Pline 	0	maxI	0	0	0	0	1	-360	360;
-15	14	r_Dline	x_Dline     0	maxI	0	0	0	0	1	-360	360;
-15	16	r_Dline	x_Dline     0	maxI	0	0	0	0	1	-360	360;
-15	18	r_Pline	x_Pline 	0	maxI	0	0	0	0	1	-360	360;
-18	17	r_Dline	x_Dline     0	maxI	0	0	0	0	1	-360	360;
-18	19	r_Dline	x_Dline     0	maxI	0	0	0	0	1	-360	360;
+12	11	r_Dline	x_Dline     0	Imaxd	0	0	0	0	1	-360	360;
+12	13	r_Dline	x_Dline     0	Imaxd	0	0	0	0	1	-360	360;
+12	15	r_Pline	x_Pline 	0	Imaxp	0	0	0	0	1	-360	360;
+15	14	r_Dline	x_Dline     0	Imaxd	0	0	0	0	1	-360	360;
+15	16	r_Dline	x_Dline     0	Imaxd	0	0	0	0	1	-360	360;
+15	18	r_Pline	x_Pline 	0	Imaxp	0	0	0	0	1	-360	360;
+18	17	r_Dline	x_Dline     0	Imaxd	0	0	0	0	1	-360	360;
+18	19	r_Dline	x_Dline     0	Imaxd	0	0	0	0	1	-360	360;
 ];
 
 % mpc.branch = [
@@ -182,11 +193,11 @@ mpc.gencost = [
 %NCOST       = 4;    %% number breakpoints in piecewise linear cost function,
 %                    %% or number of coefficients in polynomial cost function
 %COST         = 5;    %% parameters defining total cost function begin in this col
-%% convert branch impedances from Ohms to p.u.
-mpc.Vbase = mpc.bus(1,10) * 1000; % from kV to 240 Volts
+%% convert branch impedances from Ohms to p.u. 
+mpc.Vbase = mpc.bus(1,10); % from kV to 240 Volts 
 mpc.Sbase = mpc.baseMVA * 1000; % from kVA to VA 
 mpc.branch(:, [3, 4]) = mpc.branch(:, [3, 4]) /(mpc.Vbase^2 / mpc.Sbase); % in p.u.
 mpc.Ibase = mpc.Sbase/mpc.Vbase; 
-mpc.branch(:, 6) =  mpc.branch(:, 6) / mpc.Ibase; % in p.u. 
+mpc.branch(:, 6) =  mpc.branch(:, 6) / mpc.Ibase; % in p.u.  
 %% convert loads from kW to MW and kVAR to MVAR
 %mpc.bus(:, [3, 4]) = mpc.bus(:, [3, 4]);

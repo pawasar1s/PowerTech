@@ -15,6 +15,7 @@ Ysc = 1./ (R - 1j*X);
 nB = size(YBus,1); % w/o SLACK BUS
 %% Incidence matrix
 Imax = testCase.branch(:,6); % current limits
+%S0max = testCase.
 % lines below taken from matpower to find incidence matrix
 i2e = testCase.bus(:, 1); 
 e2i = sparse(max(i2e), 1);
